@@ -1,5 +1,7 @@
 #include <Servo.h>
 
+#define buzzer 6
+
 Servo servo1;
 Servo servo2;
 
@@ -19,14 +21,23 @@ void setup() {
   servo1.attach(9);
   servo2.attach(8);
   //For Sonar 1
-  pinMode(trigPin1, OUTPUT); 
+  pinMode(trigPin1, OUTPUT);
   pinMode(echoPin1, INPUT);
   //For Sonar 2
-  pinMode(trigPin2, OUTPUT); 
+  pinMode(trigPin2, OUTPUT);
   pinMode(echoPin2, INPUT);
 
+  //Button for manual agte open close
+  pinMode(3, INPUT_PULLUP);
+
+  //led signal
+  pinMode(4, OUTPUT);  //for green
+  pinMode(5, OUTPUT);  //for red
+
+  //For buzzer
+  pinMode(buzzer, OUTPUT);
+
   Serial.begin(9600);
-  //pinMode(13, OUTPUT);
 }
 
 
@@ -50,6 +61,9 @@ void loop() {
   duration2 = pulseIn(echoPin2, HIGH);
   distance2 = duration2 * 0.034 / 2;
 
+  //btn
+  byte btn = digitalRead(3);
+
   // Prints the distance on the Serial Monitor
   Serial.print("Distance One: ");
   Serial.println(distance1);
@@ -58,33 +72,45 @@ void loop() {
   delay(1000);
 
 
-  if (distance1 <10 || distance2 <10) {
+  if (distance1 < 10 || distance2 < 10 || btn == LOW) {
     if (flag == 0) {
       flag = 1;
-      //Servo Gate close
-      for (int i = 0; i <= 90; i++) {
-        servo1.write(i);
-        servo2.write(i);
-        delay(15);
-      }
-      //digitalWrite(13, HIGH);
-      delay(100);
+      servoGateClose();
+      trainSignalOn();
     } else {
       flag = 0;
-      //Servo Gate open
-      for (int i = 90; i >= 0; i--) {
-        servo1.write(i);
-        servo2.write(i);
-        delay(15);
-      }
-      //digitalWrite(13, LOW);
-      delay(100);
+      servoGateOpen();
+      trainSignalOff();
     }
   }
-
 }
 
+void servoGateClose() {
+  for (int i = 0; i <= 90; i++) {
+    servo1.write(i);
+    servo2.write(i);
+    delay(15);
+  }
+}
 
+void servoGateOpen() {
+  for (int i = 90; i >= 0; i--) {
+    servo1.write(i);
+    servo2.write(i);
+    delay(15);
+  }
+}
 
+void trainSignalOn() {
+  digitalWrite(4, HIGH);
+  digitalWrite(5, LOW);
+  tone(buzzer, 50);
+  delay(100);
+}
 
-  
+void trainSignalOff() {
+  digitalWrite(4, LOW);
+  digitalWrite(5, HIGH);
+  noTone(buzzer);
+  delay(100);
+}
