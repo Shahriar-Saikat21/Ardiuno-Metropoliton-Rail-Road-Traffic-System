@@ -61,15 +61,17 @@ void loop() {
   duration2 = pulseIn(echoPin2, HIGH);
   distance2 = duration2 * 0.034 / 2;
 
-  //btn
-  byte btn = digitalRead(3);
+  
 
   // Prints the distance on the Serial Monitor
   Serial.print("Distance One: ");
   Serial.println(distance1);
   Serial.print("Distance Two: ");
   Serial.println(distance2);
-  delay(1000);
+  delay(100);
+
+  //btn
+  byte btn = digitalRead(3);
 
 
   if (distance1 < 10 || distance2 < 10 || btn == LOW) {
@@ -77,7 +79,7 @@ void loop() {
       flag = 1;
       servoGateClose();
       trainSignalOn();
-    } else {
+    } else if(distance1 > 10 || distance2 > 10 || btn == LOW){
       flag = 0;
       servoGateOpen();
       trainSignalOff();
