@@ -2,6 +2,8 @@
 #define GreenOne 3
 #define RedTwo 4
 #define GreenTwo 5
+#define irOne 6
+#define irTwo 7
 
 unsigned long prev = 0;
 unsigned long cur = 0;
@@ -15,6 +17,8 @@ void setup() {
   pinMode(GreenOne,OUTPUT);
   pinMode(RedTwo,OUTPUT);
   pinMode(GreenTwo,OUTPUT);
+  pinMode(irOne,INPUT);
+  pinMode(irTwo,INPUT);
   Serial.begin(9600);
 
 }
@@ -22,8 +26,18 @@ void setup() {
 void loop() {
 
   cur = millis();
+  int sensorValueOne = digitalRead(irOne);
+  int sensorValueTwo = digitalRead(irTwo);
 
   if(cur-prev>=1000){
+    if(time>6){
+      if(sensorValueOne==HIGH && roadTwo== 0){
+        time = 10;
+      }else if(sensorValueTwo==HIGH && roadOne== 0){
+        time = 10;
+      }
+    }
+    
     if(time==10){
       if(roadTwo==1 && roadOne == 0){
         roadOneSystem();
