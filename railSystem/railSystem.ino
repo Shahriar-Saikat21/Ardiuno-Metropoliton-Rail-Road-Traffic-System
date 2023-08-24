@@ -74,12 +74,12 @@ void loop() {
   byte btn = digitalRead(3);
 
 
-  if (distance1 < 10 || distance2 < 10 || btn == LOW) {
+  if (distance1 < 3 || distance2 < 3 || btn == LOW) {
     if (flag == 0) {
       flag = 1;
       servoGateClose();
       trainSignalOn();
-    } else if(distance1 > 10 || distance2 > 10 || btn == LOW){
+    } else if(distance1 > 3 || distance2 > 3 || btn == LOW){
       flag = 0;
       servoGateOpen();
       trainSignalOff();
